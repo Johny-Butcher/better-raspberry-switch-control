@@ -2,7 +2,7 @@ package nscontroller
 
 // This file implements the Xbox One joystick event dispatcher and key mappings.
 
-import "github.com/omakoto/raspberry-switch-control/nscontroller/js"
+import "github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller/js"
 
 const xboxTriggerThreshold = -0.8
 

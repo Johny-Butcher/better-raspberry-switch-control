@@ -1,4 +1,4 @@
-module github.com/omakoto/raspberry-switch-control/nscontroller
+module github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller
 
 go 1.25.0
 

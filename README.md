@@ -32,7 +32,7 @@ reboot
 # Install commands
 apt install -y golang xxd git
 
-go install -v github.com/omakoto/raspberry-switch-control/nscontroller/cmd/...@latest
+go install -v github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller/cmd/...@latest
 ```
 
 1. ~~Download source for the following script.~~
@@ -83,7 +83,7 @@ sudo bash "$($HOME/go/bin/nsbackend usb-init-script-path)"
 
 ```bash
 apt install -y golang 
-go install -v github.com/omakoto/raspberry-switch-control/nscontroller/cmd/...@latest
+go install -v github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller/cmd/...@latest
 ```
 
 1. On the host PC, run it:

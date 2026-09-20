@@ -1,4 +1,4 @@
-module github.com/omakoto/raspberry-switch-control/experiment
+module github.com/Johny-Butcher/better-raspberry-switch-control/experiment
 
 go 1.14
 

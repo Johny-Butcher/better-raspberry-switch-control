@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/omakoto/raspberry-switch-control/nscontroller"
+	"github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller"
 )
 
 func TestValidateControllerCount(t *testing.T) {

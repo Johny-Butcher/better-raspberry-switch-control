@@ -4,7 +4,7 @@ package nscontroller
 
 import (
 	"github.com/omakoto/go-common/src/common"
-	"github.com/omakoto/raspberry-switch-control/nscontroller/js"
+	"github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller/js"
 	"io"
 )
 

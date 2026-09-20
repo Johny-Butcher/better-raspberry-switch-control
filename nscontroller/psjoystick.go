@@ -2,7 +2,7 @@ package nscontroller
 
 // This file implements the PlayStation (DualShock 4) joystick event dispatcher and key mappings.
 
-import "github.com/omakoto/raspberry-switch-control/nscontroller/js"
+import "github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller/js"
 
 // PsJoystickDispatcher is a dispatcher for the PS controller. (Only tested with a PS4 controller.)
 func PsJoystickDispatcher(jev *js.JoystickEvent, con Consumer) {

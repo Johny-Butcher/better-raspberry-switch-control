@@ -78,7 +78,7 @@ Install the dependencies and build the backend binary:
 sudo apt install -y golang xxd git
 
 # Option A: Install directly via Go command
-go install -v github.com/omakoto/raspberry-switch-control/nscontroller/cmd/...@latest
+go install -v github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller/cmd/...@latest
 
 # Option B: Clone this repo and run:
 ./00install.bash
@@ -90,7 +90,7 @@ Install Go and the frontend binary:
 sudo apt install -y golang
 
 # Option A: Install via Go command
-go install -v github.com/omakoto/raspberry-switch-control/nscontroller/cmd/...@latest
+go install -v github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller/cmd/...@latest
 
 # Option B: Run inside the cloned directory:
 ./00install.bash

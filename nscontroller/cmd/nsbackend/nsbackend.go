@@ -17,7 +17,7 @@ import (
 	"github.com/omakoto/go-common/src/common"
 	"github.com/omakoto/go-common/src/daemon"
 	"github.com/omakoto/go-common/src/fileutils"
-	"github.com/omakoto/raspberry-switch-control/nscontroller"
+	"github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller"
 )
 
 const (

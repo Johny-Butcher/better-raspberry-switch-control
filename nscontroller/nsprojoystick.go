@@ -2,7 +2,7 @@ package nscontroller
 
 // This file implements the Switch Pro Controller joystick event dispatcher and key mappings.
 
-import "github.com/omakoto/raspberry-switch-control/nscontroller/js"
+import "github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller/js"
 
 // NSProJoystickDispatcher is a dispatcher for the Switch Pro controller.
 func NSProJoystickDispatcher(jev *js.JoystickEvent, con Consumer) {

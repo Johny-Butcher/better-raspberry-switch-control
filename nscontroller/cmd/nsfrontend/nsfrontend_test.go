@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/omakoto/raspberry-switch-control/nscontroller/js"
+	"github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller/js"
 )
 
 func TestOpenOutputUsesStdoutByDefault(t *testing.T) {

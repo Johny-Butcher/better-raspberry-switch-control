@@ -7,7 +7,7 @@ import (
 	"math"
 	"time"
 
-	"github.com/omakoto/raspberry-switch-control/nscontroller/utils"
+	"github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller/utils"
 )
 
 type axisRateState struct {
