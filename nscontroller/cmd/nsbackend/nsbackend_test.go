@@ -3,11 +3,40 @@ package main
 // This file contains backend parser unit tests verifying buttons, sticks, timings, and shortcuts.
 
 import (
+	"os"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/omakoto/raspberry-switch-control/nscontroller"
 )
+
+func TestValidateControllerCount(t *testing.T) {
+	if *controllers != 4 || *device != "/dev/hidg0" || *fifo != "/tmp/nsbackend.fifo" {
+		t.Fatalf("unexpected backend defaults: controllers=%d device=%q fifo=%q", *controllers, *device, *fifo)
+	}
+	if err := validateControllerCount(1); err != nil {
+		t.Fatalf("positive controller count rejected: %v", err)
+	}
+	for _, count := range []int{0, -1} {
+		if err := validateControllerCount(count); err == nil {
+			t.Errorf("controller count %d was accepted", count)
+		}
+	}
+}
+
+func TestUsbScriptIncludesControllerLoop(t *testing.T) {
+	content, err := os.ReadFile("../../scripts/switch-controller-gadget")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(content), "for ((i=0; i<controllers; i++)); do") {
+		t.Fatal("USB script does not loop over controllers")
+	}
+	if !strings.Contains(string(content), "hid.usb$i") {
+		t.Fatal("USB script does not create indexed HID functions")
+	}
+}
 
 func newTestCoordinator() (*Coordinator, *nscontroller.Controller) {
 	// Initialize with empty device file path and dummy tick interval

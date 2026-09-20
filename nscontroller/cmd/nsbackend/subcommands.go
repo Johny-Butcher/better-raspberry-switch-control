@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/omakoto/go-common/src/common"
 )
@@ -27,5 +28,7 @@ func printUsbInitScript() {
 	content, err := io.ReadAll(script)
 	common.Checke(err)
 
+	defaultControllers := fmt.Sprintf("controllers=${1:-%d}", *controllers)
+	content = []byte(strings.Replace(string(content), "controllers=${1:-4}", defaultControllers, 1))
 	fmt.Printf("%s", content)
 }

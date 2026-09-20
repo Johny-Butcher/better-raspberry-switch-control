@@ -4,6 +4,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"math"
 	"os"
@@ -17,7 +18,6 @@ import (
 	"github.com/omakoto/go-common/src/daemon"
 	"github.com/omakoto/go-common/src/fileutils"
 	"github.com/omakoto/raspberry-switch-control/nscontroller"
-	"github.com/pborman/getopt/v2"
 )
 
 const (
@@ -25,17 +25,34 @@ const (
 )
 
 var (
-	help                  = getopt.BoolLong("help", 'h', "help")
-	debug                 = getopt.BoolLong("debug", 'd', "Enable debug output")
-	device                = getopt.StringLong("device", 'f', "/dev/hidg0", "Specify device file")
-	startAsDaemon         = getopt.BoolLong("daemon", 'x', "Run as daemon (implies --make-fifo)")
-	createFifo            = getopt.BoolLong("make-fifo", 0, "Create a FIFO and read commands from it")
-	fifo                  = getopt.StringLong("fifo", 0, "/tmp/nsbackend.fifo", "Specify FIFO filename")
-	autoReleaseMillis     = getopt.IntLong("auto-release-millis", 'a', 50, "Set auto-release delay in milliseconds")
-	usbTickIntervalMillis = getopt.IntLong("tick-interval-millis", 0, 5, "Send updates to Switch every this milliseconds")
+	help                  = flag.Bool("help", false, "show help")
+	debug                 = flag.Bool("debug", false, "Enable debug output")
+	controllers           = flag.Int("controllers", 4, "number of controllers in the USB gadget")
+	device                = flag.String("dev", "/dev/hidg0", "Specify device file")
+	startAsDaemon         = flag.Bool("daemon", false, "Run as daemon (implies --make-fifo)")
+	createFifo            = flag.Bool("make-fifo", false, "Create a FIFO and read commands from it")
+	fifo                  = flag.String("fifo", "/tmp/nsbackend.fifo", "Specify FIFO filename")
+	autoReleaseMillis     = flag.Int("auto-release-millis", 50, "Set auto-release delay in milliseconds")
+	usbTickIntervalMillis = flag.Int("tick-interval-millis", 5, "Send updates to Switch every this milliseconds")
 
 	autoReleaseDur time.Duration
 )
+
+func init() {
+	flag.StringVar(device, "device", "/dev/hidg0", "Specify device file (alias for -dev)")
+	flag.BoolVar(help, "h", false, "show help")
+	flag.BoolVar(debug, "d", false, "Enable debug output")
+	flag.StringVar(device, "f", "/dev/hidg0", "Specify device file (alias for -dev)")
+	flag.BoolVar(startAsDaemon, "x", false, "Run as daemon (implies --make-fifo)")
+	flag.IntVar(autoReleaseMillis, "a", 50, "Set auto-release delay in milliseconds")
+}
+
+func validateControllerCount(count int) error {
+	if count <= 0 {
+		return fmt.Errorf("controllers must be positive, got %d", count)
+	}
+	return nil
+}
 
 // The delay needs to be bigger than the interval within startInputReport().
 const AUTO_RELEASE_MILLIS_MIN = 20
@@ -383,13 +400,13 @@ func asyncConnect(con *nscontroller.Controller) {
 func realMain() int {
 	syscall.Umask(0)
 
+	flag.Parse()
 	if ret := maybeHandleSubcommand(); ret >= 0 {
 		return ret
 	}
 
-	getopt.Parse()
 	if *help {
-		getopt.Usage()
+		flag.Usage()
 		return 0
 	}
 
@@ -412,8 +429,8 @@ func realMain() int {
 		*autoReleaseMillis = AUTO_RELEASE_MILLIS_MIN
 	}
 	autoReleaseDur = time.Duration(*autoReleaseMillis * int(time.Millisecond))
-	if device == nil {
-		*device = "/dev/hidg0"
+	if err := validateControllerCount(*controllers); err != nil {
+		common.Fatalf("Invalid controller count: %v", err)
 	}
 
 	input := os.Stdin

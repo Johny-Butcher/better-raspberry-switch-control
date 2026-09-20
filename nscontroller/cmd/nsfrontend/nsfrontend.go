@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"strings"
 
@@ -16,11 +17,18 @@ import (
 var (
 	debug     = getopt.BoolLong("debug", 'd', "Enable debug output")
 	joystick  = getopt.StringLong("joystick", 'j', "/dev/input/js0", "Specify joystick device file")
-	out       = getopt.StringLong("out", 'o', "/dev/stdout", "Specify backend file")
+	out       = getopt.StringLong("out", 'o', "", "Specify backend file (default: stdout)")
 	rateLimit = getopt.IntLong("rate-limit", 'r', 120, "Input rate limit in Hz (0 to disable)")
 
 	myName = common.MustGetBinName()
 )
+
+func openOutput(path string) (io.WriteCloser, error) {
+	if path == "" {
+		return os.Stdout, nil
+	}
+	return os.OpenFile(path, os.O_WRONLY|os.O_APPEND, 0666)
+}
 
 func mustGetDispatcher(js *js.Js) nscontroller.JoystickDispatcher {
 	if strings.Contains(js.Name, "X-Box One") || strings.Contains(js.Name, "Xbox") {
@@ -47,7 +55,7 @@ func realMain() int {
 		common.DebugEnabled = true
 	}
 
-	out, err := os.OpenFile(*out, os.O_WRONLY, 0)
+	out, err := openOutput(*out)
 	common.Checkf(err, "open failed")
 
 	js, err := js.NewJs(*joystick)

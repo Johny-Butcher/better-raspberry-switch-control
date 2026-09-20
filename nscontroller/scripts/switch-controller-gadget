@@ -3,6 +3,13 @@
 # Copied from:
 # https://gist.github.com/mzyy94/60ae253a45e2759451789a117c59acf9#file-add_procon_gadget-sh
 
+controllers=${1:-4}
+
+if ! [[ $controllers =~ ^[1-9][0-9]*$ ]]; then
+  echo "Error: controller count must be a positive integer" 1>&2
+  exit 1
+fi
+
 device=/dev/hidg0
 
 if (( $(id -u) != 0 )) ; then
@@ -38,16 +45,21 @@ echo "Nintendo Switch Pro Controller" > configs/c.1/strings/0x409/configuration
 echo 500 > configs/c.1/MaxPower
 echo 0xa0 > configs/c.1/bmAttributes
 
-mkdir -p functions/hid.usb0
-echo 0 > functions/hid.usb0/protocol
-echo 0 > functions/hid.usb0/subclass
-echo 64 > functions/hid.usb0/report_length
-echo 050115000904A1018530050105091901290A150025017501950A5500650081020509190B290E150025017501950481027501950281030B01000100A1000B300001000B310001000B320001000B35000100150027FFFF0000751095048102C00B39000100150025073500463B0165147504950181020509190F2912150025017501950481027508953481030600FF852109017508953F8103858109027508953F8103850109037508953F9183851009047508953F9183858009057508953F9183858209067508953F9183C0 | xxd -r -ps > functions/hid.usb0/report_desc
+report_descriptor=050115000904A1018530050105091901290A150025017501950A5500650081020509190B290E150025017501950481027501950281030B01000100A1000B300001000B310001000B320001000B35000100150027FFFF0000751095048102C00B39000100150025073500463B0165147504950181020509190F2912150025017501950481027508953481030600FF852109017508953F8103858109027508953F8103850109037508953F9183851009047508953F9183858009057508953F9183858209067508953F9183C0
 
-ln -s functions/hid.usb0 configs/c.1/
+for ((i=0; i<controllers; i++)); do
+  function=functions/hid.usb$i
+  mkdir -p "$function"
+  echo 0 > "$function/protocol"
+  echo 0 > "$function/subclass"
+  echo 64 > "$function/report_length"
+  printf '%s' "$report_descriptor" | xxd -r -ps > "$function/report_desc"
+  ln -s "../../$function" configs/c.1/
+done
 
 ls /sys/class/udc > UDC # Does it synchronously create the device file??
 
-chmod 666 $device
-
-ls -l $device
+for ((i=0; i<controllers; i++)); do
+  chmod 666 "/dev/hidg$i"
+  ls -l "/dev/hidg$i"
+done
