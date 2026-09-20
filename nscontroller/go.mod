@@ -1,6 +1,6 @@
 module github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller
 
-go 1.25.0
+go 1.23
 
 require (
 	github.com/omakoto/go-common v0.0.0-20250106043038-04d11d1e6ee4
