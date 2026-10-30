@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Run nsall in standalone mode (joystick connected directly to the Pi).
+# The joystick and the Switch are both on the same machine.
+#
+# Usage: ./3-run-nsall [extra nsall flags]
+
+exec "$HOME/go/bin/nsall" "$@"
+

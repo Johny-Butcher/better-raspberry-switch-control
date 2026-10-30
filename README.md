@@ -65,6 +65,50 @@ sudo bash "$($HOME/go/bin/nsbackend usb-init-script-path)"
   - If it's a Zero, use the micro USB port.
 
 
+## `nsall` — Combined Low-Latency Binary (Recommended)
+
+`nsall` replaces the `nsfrontend` + `nsbackend` pair with a single binary that uses a
+compact 17-byte binary frame protocol instead of newline-delimited text commands.
+
+**Why it's faster / loses fewer inputs:**
+- No text serialisation or parsing (no `fmt.Sprint`, no `strings.Fields`, no `strconv.ParseFloat`)
+- No `Coordinator` goroutine channel (events go directly to the HID report under one mutex)
+- Axis Y inversion and button press/release are handled entirely on the sender side
+- 17 bytes < `PIPE_BUF` so every SSH pipe write is atomic — no partial frames
+
+### Standalone mode (joystick plugged into the Pi)
+
+```bash
+nsall -j /dev/input/js0
+```
+
+### SSH / pipe mode (joystick on host PC, Switch on Pi)
+
+```bash
+# Replaces:  nsfrontend -j /dev/input/js0 -o >(ssh pi@$PI_ADDRESS nsbackend)
+nsall --client -j /dev/input/js0 | ssh pi@$PI_ADDRESS nsall --server
+```
+
+### Direct TCP mode (LAN, no SSH)
+
+```bash
+# Pi:
+nsall --serve :12345
+
+# Host PC:
+nsall --connect $PI_ADDRESS:12345 -j /dev/input/js0
+```
+
+### Install
+
+Same as the existing binaries — `nsall` is part of the `cmd/...` glob:
+
+```bash
+go install -v github.com/Johny-Butcher/better-raspberry-switch-control/nscontroller/cmd/...@latest
+```
+
+---
+
 ## Control Nintendo Switch with Joystick on a PC (via Raspberry Pi)
 
 1. Connect the Raspberry Pi to the Switch.
